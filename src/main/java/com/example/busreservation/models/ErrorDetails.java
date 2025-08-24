@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginRequest {
-    private String userName;
-    private String password;
+public class ErrorDetails {
+    private int errorCode;
+    private  String errorMessage;
+    private String devErrorMessage;
+    private long timeStamp;
+
 }
