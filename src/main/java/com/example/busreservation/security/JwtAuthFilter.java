@@ -1,7 +1,7 @@
 package com.example.busreservation.security;
 
+import com.example.busreservation.models.CustomUserPrincipal;
 import com.example.busreservation.services.CustomUserDetailsService;
-import com.example.busreservation.security.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,34 +25,42 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
-     String token=getTokenFromRequest(request);
-     if(StringUtils.hasText(token)&&jwtTokenProvider.validateToken(token)){
-         String userName= jwtTokenProvider.getUserName(token);
-         UserDetails userDetails=customUserDetailsService.loadUserByUsername(userName);
-         UsernamePasswordAuthenticationToken authenticationToken=
-                 new UsernamePasswordAuthenticationToken(
-                         userDetails,
-                         null,
-                         userDetails.getAuthorities()
-                 );
-         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-     }
-     filterChain.doFilter(request,response);
+
+        String token = getTokenFromRequest(request);
+
+        if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
+            String userName = jwtTokenProvider.getUserName(token);
+            Long customerId = jwtTokenProvider.getUserId(token);
+
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(userName);
+
+            // ✅ store customerId along with UserDetails
+            CustomUserPrincipal principal = new CustomUserPrincipal(userDetails, customerId);
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            principal,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        }
+        filterChain.doFilter(request, response);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request ){
-       String bearerToken = request.getHeader("Authorization");
-       if(StringUtils.hasText(bearerToken)&&bearerToken.startsWith("Bearer ")){
-        return  bearerToken.substring(7);
-       }
+    private String getTokenFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
         return null;
-
     }
-
 }

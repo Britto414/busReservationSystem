@@ -1,8 +1,8 @@
 package com.example.busreservation.entities;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,20 +11,18 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
-@Table(name = "users")
-public class AppUser {
+@Table(name = "customer")
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String userName;
+    private Long customerId;
 
+    private String customerName;
 
-    private String password;
+    @Column(unique = true)
+    private String mobile;
 
-    private String role;
-
-
+    @Column(unique = true)
+    private String email;
 }
-

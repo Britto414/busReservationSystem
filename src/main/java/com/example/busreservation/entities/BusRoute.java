@@ -1,8 +1,9 @@
 package com.example.busreservation.entities;
 
+
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,20 +12,19 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 @Entity
-@Table(name = "users")
-public class AppUser {
+@Table(name = "bus_route")
+public class BusRoute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String userName;
+    private Long routeId;
 
+    private String routeName;
 
-    private String password;
+    private String cityFrom;
 
-    private String role;
+    private String cityTo;
 
-
+    private Double distanceInKm;
 }
 
