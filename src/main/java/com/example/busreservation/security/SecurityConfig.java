@@ -1,6 +1,5 @@
 package com.example.busreservation.security;
-import com.example.busreservation.security.JwtAuthFilter;
-import com.example.busreservation.services.CustomUserDetailsService;
+
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,48 +18,34 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 public class SecurityConfig {
-    @Autowired
-    private JWTEntryPoint jwtEntryPoint;
+        // @Autowired
+        // private JWTEntryPoint jwtEntryPoint;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+        // @Autowired
+        // private JwtAuthFilter jwtAuthFilter;
 
-    @Autowired
-    private JwtAuthFilter jwtAuthFilter;
+        @Bean
+        SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+                http.csrf(AbstractHttpConfigurer::disable)
+                                .authorizeHttpRequests(authReq -> authReq
+                                                .anyRequest().permitAll() // ✅ allow every request
+                                )
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                                .httpBasic(Customizer.withDefaults());
 
-   @Bean
-   SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception{
-       http.csrf(AbstractHttpConfigurer::disable).
-               authorizeHttpRequests((authReq)->authReq
-                       .requestMatchers(HttpMethod.GET)
-                       .permitAll()
-                       .requestMatchers("/api/auth/**")
-                       .permitAll()
-                       .requestMatchers(HttpMethod.POST,
-                               "/api/bus/add",
-                               "api/schedule/add",
-                               "api/route/add")
-                       .authenticated()
-                       .requestMatchers(HttpMethod.POST,
-                               "/api/reservation/add")
-                       .permitAll()
+                // No need for jwtAuthFilter if you're permitting everything
+                return http.build();
+        }
 
-                      )
-                      .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtEntryPoint))
-                      .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                      .httpBasic(Customizer.withDefaults());
-       http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-       return http.build();
-   }
+        @Bean
+        public PasswordEncoder passwordENcoder() {
+                return new BCryptPasswordEncoder();
+        }
 
-   @Bean
-   public PasswordEncoder passwordENcoder(){
-       return new BCryptPasswordEncoder();
-   }
-
-   @Bean
-   public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception{
-      return  configuration.getAuthenticationManager();
-   }
+        @Bean
+        public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+                return configuration.getAuthenticationManager();
+        }
 
 }

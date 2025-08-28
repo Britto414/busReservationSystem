@@ -1,32 +1,29 @@
 package com.example.busreservation.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Entity
+@Table(name = "buses")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity(name = "bus")
+@AllArgsConstructor
+@Builder
 public class Bus {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long busId;
 
-    private String busName;
-
-    @Column(unique = true)
+    @Column(nullable = false, unique = true)
     private String busNumber;
 
-    private String busType;
+    private String type; // AC/Non-AC, Sleeper, etc.
 
-    private Integer totalSeat;
+    private int capacity;
 
-
-
-
+    @ManyToOne
+    @JoinColumn(name = "operator_id", nullable = false)
+    private Operator operator;
 }
 

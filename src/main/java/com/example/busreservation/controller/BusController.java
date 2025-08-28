@@ -1,29 +1,38 @@
 package com.example.busreservation.controller;
 
-import com.example.busreservation.entities.Bus;
-import com.example.busreservation.models.ResponseModel;
-import com.example.busreservation.services.BusService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.busreservation.entities.Bus;
+import com.example.busreservation.entities.Operator;
+import com.example.busreservation.services.BusService;
+
 @RestController
-@RequestMapping("/api/bus")
+@RequestMapping("/api/buses")
 public class BusController {
     @Autowired
     private BusService busService;
-    @PostMapping("/add")
-    public ResponseModel<Bus> addBus(@RequestBody Bus bus){
-       final Bus savedBus= busService.addBus(bus);
-        return new ResponseModel<>(HttpStatus.OK.value(), "bus successfully saved",savedBus);
+
+    @PostMapping
+    public ResponseEntity<Bus> addBus(@RequestBody Bus bus) {
+        return ResponseEntity.ok(busService.addBus(bus));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Bus>> getAllBus(){
-        return ResponseEntity.ok(busService.getAllBus()) ;
+    @GetMapping
+    public ResponseEntity<List<Bus>> getAllBuses() {
+        return ResponseEntity.ok(busService.getAllBuses());
     }
 
+    @GetMapping("/operator/{busId}")
+    public ResponseEntity<Operator> getBusesByOperator(@PathVariable Long busId) {
+        return ResponseEntity.ok(busService.getOperatorByBusId(busId));
+    }   
 }

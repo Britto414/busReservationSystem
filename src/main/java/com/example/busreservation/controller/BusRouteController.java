@@ -1,8 +1,10 @@
 package com.example.busreservation.controller;
 
-import com.example.busreservation.entities.BusRoute;
+
+import com.example.busreservation.entities.Route;
 import com.example.busreservation.models.ResponseModel;
-import com.example.busreservation.services.BusRouteService;
+import com.example.busreservation.services.RouteService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,30 +17,23 @@ import java.util.List;
 public class BusRouteController {
 
     @Autowired
-    private BusRouteService busRouteService;
+    private RouteService busRouteService;
 
     @PostMapping("/add")
-    public ResponseModel<BusRoute> addRoute(@RequestBody BusRoute busRoute) {
-        final BusRoute busRoute1 = busRouteService.addRoute(busRoute);
+    public ResponseModel<Route> addRoute(@RequestBody Route busRoute) {
+        final Route busRoute1 = busRouteService.addRoute(busRoute);
         return new ResponseModel<>(HttpStatus.OK.value(), "Route saved", busRoute1);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<BusRoute>> getAllRoutes() {
-        return ResponseEntity.ok(busRouteService.getAllBusRoutes());
+    public ResponseEntity<List<Route>> getAllRoutes() {
+        return ResponseEntity.ok(busRouteService.getAllRoutes());
     }
 
-    @GetMapping("/{routeName}")
-    public ResponseEntity<BusRoute> getRouteByRouteName(@PathVariable(name = "routeName") String routeName) {
-        return ResponseEntity.ok(busRouteService.getRouteByRouteName(routeName));
+    @PutMapping("/update/{routeId}")
+    public ResponseEntity<Route> updateRoute(@PathVariable Long routeId, @RequestBody Route busRoute) {
+        Route route = busRouteService.updateRoute(routeId, busRoute);
+        return ResponseEntity.ok(route);
     }
 
-    @GetMapping("/query")
-    public ResponseEntity<BusRoute> getRouteByCityFromAndCityTo(
-            @RequestParam String cityFrom,
-            @RequestParam String cityTo
-    ){
-        return ResponseEntity.ok(busRouteService.getRouteByCityFromAndCityTo(cityFrom,cityTo));
-
-    }
 }

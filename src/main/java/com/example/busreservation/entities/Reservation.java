@@ -2,39 +2,40 @@ package com.example.busreservation.entities;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "reservations",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"schedule_id", "seat_id"})) // prevent double booking
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-@Entity
-@Table(name = "bus_reservation")
+@AllArgsConstructor
+@Builder
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String reservationId;
+    private Long bookingId;
 
-    @OneToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @OneToOne
-    @JoinColumn(name = "bus_schedule_id")
-    private BusSchedule busSchedule;
+    @ManyToOne
+    @JoinColumn(name = "schedule_id", nullable = false)
+    private Schedule schedule;
 
-    private Long timestamp;
+    @ManyToOne
+    @JoinColumn(name = "seat_id", nullable = false)
+    private Seat seat;
 
-    private String departureDate;
+    private LocalDateTime bookingDate;
 
-    private Integer totalSeatBooked;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
-    private String seatNumbers;
-
-    private String reservationStatus;
-
-    private Integer totalPrice;
+    public enum Status {
+        BOOKED, CANCELLED, PENDING
+    }
 }

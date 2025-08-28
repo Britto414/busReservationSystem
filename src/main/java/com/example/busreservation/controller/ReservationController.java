@@ -11,34 +11,30 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reservation")
+@RequestMapping("/api/reservations")
 public class ReservationController {
-  @Autowired
-  private ReservationService reservationService;
+    @Autowired
+    private ReservationService reservationService;
 
-  @PostMapping("/add")
-  public ResponseModel<Reservation> addReservation(@RequestBody Reservation reservation){
-      final Reservation res =reservationService.addReservation(reservation);
-      return  new ResponseModel<>(HttpStatus.OK.value(), "Reservation Saved",res);
-  }
+    
 
-  @GetMapping("/all")
-  public ResponseEntity<List<Reservation>> getAllReservation(){
-      return ResponseEntity.ok(reservationService.getAllReservation());
-  }
+    @PostMapping("/book")
+    public ResponseEntity<Reservation> bookSeat(
+            @RequestParam Long userId,
+            @RequestParam Long scheduleId,
+            @RequestParam Long seatId) {
 
-  @GetMapping("/query")
-  public ResponseEntity<List<Reservation>> getReservationByScheduleAndDepartureDate(
-          @RequestParam Long scheduleId,
-          @RequestParam String departureDate
-  ){
-      return ResponseEntity.ok(reservationService.getReservationByScheduleAndDepartureDate(scheduleId,departureDate));
-  }
+        return ResponseEntity.ok(reservationService.bookSeat(userId, scheduleId, seatId));
+    }
 
-  @GetMapping("/all/{mobile}")
-  public  ResponseEntity<List<Reservation>> getReservationsByMobile(
-          @PathVariable(name = "mobile") String mobile
-  ){
-      return ResponseEntity.ok(reservationService.getReservationsByMobile(mobile));
-  }
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<Reservation>> getUserReservations(@PathVariable Long userId) {
+        return ResponseEntity.ok(reservationService.getReservationsByUser(userId));
+    }
+
+    @PostMapping("/{bookingId}/cancel")
+    public ResponseEntity<String> cancelReservation(@PathVariable Long bookingId) {
+        reservationService.cancelReservation(bookingId);
+        return ResponseEntity.ok("Reservation cancelled successfully!");
+    }
 }

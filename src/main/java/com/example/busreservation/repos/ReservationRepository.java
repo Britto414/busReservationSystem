@@ -1,16 +1,24 @@
 package com.example.busreservation.repos;
 
-import com.example.busreservation.entities.BusSchedule;
-import com.example.busreservation.entities.Customer;
+import com.example.busreservation.entities.Schedule;
 import com.example.busreservation.entities.Reservation;
+import com.example.busreservation.entities.Seat;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface ReservationRepository extends JpaRepository<Reservation,Long> {
 
-    Optional<List<Reservation>> findByCustomer(Customer customer);
+@Repository
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    Optional<List<Reservation>> findByBusScheduleAndDepartureDate(BusSchedule busSchedule,String departureDate );
+    // Get all reservations by user
+    List<Reservation> findByUser_UserId(Long userId);
+
+    // Check if a seat is already booked for a schedule
+    boolean existsByScheduleAndSeatAndStatus(Schedule schedule, Seat seat, String status);
+
+    boolean existsBySeatSeatIdAndScheduleScheduleId(long seatId, long scheduleId);
+
+    List<Reservation> findByUserUserId(Long userId);
 }
