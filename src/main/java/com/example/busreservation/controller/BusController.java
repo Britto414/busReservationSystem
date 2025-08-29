@@ -32,7 +32,7 @@ public class BusController {
     }
 
     @GetMapping("/operator/{busId}")
-    public ResponseEntity<Operator> getBusesByOperator(@PathVariable Long busId) {
+    public ResponseEntity<Operator> getBusesByOperator(@PathVariable Long busId) throws Exception {
         return ResponseEntity.ok(busService.getOperatorByBusId(busId));
     }   
 }

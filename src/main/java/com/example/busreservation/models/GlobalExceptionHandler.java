@@ -2,13 +2,13 @@ package com.example.busreservation.models;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import java.nio.file.AccessDeniedException;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ReservationApiException.class)
     public ResponseEntity<ErrorDetails> handleReservationApiException(ReservationApiException exception, WebRequest request){
@@ -26,7 +26,8 @@ public class GlobalExceptionHandler {
         errorDetails.setDevErrorMessage(request.getDescription(false));
         errorDetails.setTimeStamp(System.currentTimeMillis());
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);  }
-    @ExceptionHandler(Exception.class)
+    
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception exception, WebRequest request){
         final ErrorDetails errorDetails=new ErrorDetails();
         errorDetails.setErrorMessage(exception.getLocalizedMessage());

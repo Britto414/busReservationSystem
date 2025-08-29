@@ -1,6 +1,5 @@
 package com.example.busreservation.repos;
 
-import com.example.busreservation.entities.Bus;
 import com.example.busreservation.entities.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

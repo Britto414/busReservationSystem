@@ -26,25 +26,25 @@ public class BusService {
     }
 
     // Update a bus
-    public Bus updateBus(Long busId, Bus updatedBus) {
+    public Bus updateBus(Long busId, Bus updatedBus) throws Exception {
         return busRepository.findById(busId).map(bus -> {
             bus.setBusNumber(updatedBus.getBusNumber());
             bus.setCapacity(updatedBus.getCapacity());
             bus.setType(updatedBus.getType());
             bus.setOperator(updatedBus.getOperator());
             return busRepository.save(bus);
-        }).orElseThrow(() -> new IllegalArgumentException("Bus not found with ID: " + busId));
+        }).orElseThrow(() -> new RuntimeException("Bus not found with ID: " + busId));
     }
 
     // Delete a bus by ID
-    public void deleteBus(Long busId) {
+    public void deleteBus(Long busId) throws Exception {
         if (!busRepository.existsById(busId)) {
-            throw new IllegalArgumentException("Bus not found with ID: " + busId);
+            throw new RuntimeException("Bus not found with ID: " + busId);
         }
         busRepository.deleteById(busId);
     }
 
-    public Operator getOperatorByBusId(Long busId) {
+    public Operator getOperatorByBusId(Long busId) throws Exception {
         Optional<Bus> busOpt = busRepository.findById(busId);
         if (busOpt.isPresent()) {
             return busOpt.get().getOperator();
