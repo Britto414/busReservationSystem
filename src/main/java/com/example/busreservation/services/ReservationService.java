@@ -52,8 +52,17 @@ public class ReservationService {
                 .orElseThrow(() -> new RuntimeException("Seat not found"));
 
         // 4. Prevent double booking
-        if (reservationRepository.existsBySeatSeatIdAndScheduleScheduleId(seatId, scheduleId)) {
-            throw new RuntimeException("Seat already booked for this schedule");
+        Reservation existingReservation = reservationRepository.findBySeatSeatIdAndScheduleScheduleId(seatId, scheduleId);
+        if (existingReservation != null) {
+            if (existingReservation.getStatus() == Reservation.Status.BOOKED) {
+                throw new RuntimeException("Seat already booked for this schedule");
+            } else if (existingReservation.getStatus() == Reservation.Status.CANCELLED) {
+            // Update the existing reservation
+                existingReservation.setUser(user);
+                existingReservation.setBookingDate(LocalDate.now().atStartOfDay());
+                existingReservation.setStatus(Reservation.Status.BOOKED);
+                return reservationRepository.save(existingReservation);
+            }
         }
 
         // 5. Create Reservation

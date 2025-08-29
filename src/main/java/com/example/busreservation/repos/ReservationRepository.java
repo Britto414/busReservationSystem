@@ -21,4 +21,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     boolean existsBySeatSeatIdAndScheduleScheduleId(long seatId, long scheduleId);
 
     List<Reservation> findByUserUserId(Long userId);
+
+    Reservation findBySeatSeatIdAndScheduleScheduleId(Long seatId, Long scheduleId);
 }
