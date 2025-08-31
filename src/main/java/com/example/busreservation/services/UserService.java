@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.busreservation.entities.User;
+import com.example.busreservation.models.CustomUserDetails;
 import com.example.busreservation.repos.UserRepository;
 
 import jakarta.annotation.PostConstruct;
@@ -36,8 +37,8 @@ public class UserService implements UserDetailsService {
     private String Admin_Phone; 
 
     @Override
-    public UserDetails  loadUserByUsername(String username) {
-        User userEntity = userRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(String username) {
+        User userEntity = userRepository.findByName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         String role;
@@ -50,11 +51,7 @@ public class UserService implements UserDetailsService {
             role = "USER";
         }
 
-        return org.springframework.security.core.userdetails.User
-                .withUsername(userEntity.getName())
-                .password(userEntity.getPassword())
-                .authorities(role)
-                .build();
+        return new CustomUserDetails(userEntity);
     }
     
     public User registerUser(User user) {
@@ -86,7 +83,7 @@ public class UserService implements UserDetailsService {
 
     @PostConstruct
     public void createAdminIfNotExists() {
-        Optional<User> existingAdmin = userRepository.findByUsername(ADMIN_USERNAME);
+        Optional<User> existingAdmin = userRepository.findByName(ADMIN_USERNAME);
 
         if (existingAdmin.isEmpty()) {
             User admin = new User();

@@ -1,7 +1,6 @@
 package com.example.busreservation.security;
 
-import com.example.busreservation.entities.User;
-import com.example.busreservation.models.CustomUserPrincipal;
+
 import com.example.busreservation.services.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

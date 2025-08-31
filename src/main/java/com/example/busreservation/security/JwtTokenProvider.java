@@ -1,6 +1,8 @@
 package com.example.busreservation.security;
 
 import com.example.busreservation.entities.User;
+import com.example.busreservation.models.CustomUserDetails;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -20,20 +22,24 @@ public class JwtTokenProvider {
     @Value("${app.jwtExpirationInMs}")
     private Long expiration;
 
-    // Generate token with AppUser ID as subject
+
     public String generateToken(Authentication authentication) {
-        User user = (User) authentication.getPrincipal(); // cast to your user entity
-        String userName = user.getName();
 
-        Date expireDate = new Date(new Date().getTime() + expiration);
+    CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        return Jwts.builder()
-                .setSubject(userName) // store userId instead of username
-                .setIssuedAt(new Date())
-                .setExpiration(expireDate)
-                .signWith(key())
-                .compact();
-    }
+    String userName = userDetails.getUsername(); 
+    
+
+    Date expireDate = new Date(new Date().getTime() + expiration);
+
+    return Jwts.builder()
+            .setSubject(userName) 
+            .setIssuedAt(new Date())
+            .setExpiration(expireDate)
+            .signWith(key())
+            .compact();
+}
+
 
 
     // Validate token
