@@ -14,12 +14,12 @@ import com.example.busreservation.entities.Seat; // Ensure this is the correct p
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/seats")
+@RequestMapping("/api/admin/seats")
 public class SeatController {
     @Autowired
     private SeatService seatService;
 
-    @GetMapping("/bus/{busId}")
+    @GetMapping("/{busId}")
     public ResponseEntity<List<Seat>> getSeatsByBusId(@PathVariable Long busId) {
         return ResponseEntity.ok(seatService.getSeatsByBusId(busId));
     }

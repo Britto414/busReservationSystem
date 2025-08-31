@@ -16,7 +16,7 @@ import com.example.busreservation.entities.Operator;
 import com.example.busreservation.services.BusService;
 
 @RestController
-@RequestMapping("/api/buses")
+@RequestMapping("/api/admin/buses")
 public class BusController {
     @Autowired
     private BusService busService;

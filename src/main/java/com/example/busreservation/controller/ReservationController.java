@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/reservations")
+@RequestMapping("/api/user/reservations")
 public class ReservationController {
     @Autowired
     private ReservationService reservationService;
@@ -25,12 +25,12 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.bookSeat(userId, scheduleId, seatId));
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<List<Reservation>> getUserReservations(@PathVariable Long userId) {
         return ResponseEntity.ok(reservationService.getReservationsByUser(userId));
     }
 
-    @PostMapping("/{bookingId}/cancel")
+    @PostMapping("/cancel/{bookingId}")
     public ResponseEntity<String> cancelReservation(@PathVariable Long bookingId) {
         reservationService.cancelReservation(bookingId);
         return ResponseEntity.ok("Reservation cancelled successfully!");

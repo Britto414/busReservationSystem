@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.busreservation.entities.Operator;
 import com.example.busreservation.services.OperatorService;
 
-@RequestMapping("/api/operators")
+@RequestMapping("/api/admin/operators")
 @RestController
 public class OperatorController {
     @Autowired

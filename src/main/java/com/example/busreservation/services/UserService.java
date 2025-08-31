@@ -4,20 +4,58 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.busreservation.entities.User;
 import com.example.busreservation.repos.UserRepository;
 
+import jakarta.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
+
 
 @Service
-public class UserService  {
+public class UserService implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder; // For secure passwords
 
+    // Admin credentials from application.properties
+    @Value("${app.admin.username}")
+    private String ADMIN_USERNAME;
+    @Value("${app.admin.password}")
+    private String ADMIN_PASSWORD; 
+    @Value("${app.admin.mail}")
+    private String Admin_Mail;      
+    @Value("${app.admin.phone}")
+    private String Admin_Phone; 
+
+    @Override
+    public UserDetails  loadUserByUsername(String username) {
+        User userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String role;
+
+        // ✅ If admin credentials, give ROLE_ADMIN
+        if (username.equals(ADMIN_USERNAME)) {
+            role = "ADMIN";
+        } else {
+            // ✅ Everyone else gets ROLE_USER
+            role = "USER";
+        }
+
+        return org.springframework.security.core.userdetails.User
+                .withUsername(userEntity.getName())
+                .password(userEntity.getPassword())
+                .authorities(role)
+                .build();
+    }
     
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -44,5 +82,20 @@ public class UserService  {
     
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @PostConstruct
+    public void createAdminIfNotExists() {
+        Optional<User> existingAdmin = userRepository.findByUsername(ADMIN_USERNAME);
+
+        if (existingAdmin.isEmpty()) {
+            User admin = new User();
+            admin.setName(ADMIN_USERNAME);
+            admin.setPassword(passwordEncoder.encode(ADMIN_PASSWORD));
+            admin.setEmail(Admin_Mail);
+            admin.setPhone(Admin_Phone);
+            userRepository.save(admin);
+        
+        }
     }
 }

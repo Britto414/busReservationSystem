@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/route")
+@RequestMapping("/api/admin/route")
 public class BusRouteController {
 
     @Autowired
